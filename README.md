@@ -9,9 +9,7 @@
 ## Tecnologias Utilizadas
 - Python
 - Flask
-- SQLAlchemy
 - MySQL Azure
-- PyMySQL
 - azure web app service
 - chatbot sdk microsoft rodando local
 
