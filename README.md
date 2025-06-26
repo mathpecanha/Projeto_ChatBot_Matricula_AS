@@ -1,6 +1,6 @@
 
 
-# Projeto AP2 Big Data - IBMEC
+# AS Big Data - IBMEC
 
 ## Integrantes do Grupo
 - Matheus Pecanha Cavalcante - 202208385011
