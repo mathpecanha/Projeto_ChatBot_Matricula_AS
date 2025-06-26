@@ -136,6 +136,12 @@ Bem-vindo(a) à nossa instituição! 🎓
 ❌ **Erro ao Processar Matrícula**
 
 Desculpe, ocorreu um erro ao processar sua matrícula. 
+
+Possíveis causas:
+• Backend não está rodando (execute: python run.py)
+• Problema de conexão com o servidor
+• Email já cadastrado no sistema
+
 Por favor, tente novamente mais tarde ou entre em contato com a secretaria: secretaria@exemplo.edu
 
 Você pode tentar novamente digitando 'quero me matricular'.
@@ -162,17 +168,41 @@ Você pode tentar novamente digitando 'quero me matricular'.
                 'Content-Type': 'application/json'
             }
             
+            logger.info(f"Tentando enviar matrícula para: {url}")
+            logger.info(f"Dados: {dados}")
+            
+            # Primeiro, testar se o backend está acessível
+            try:
+                test_response = requests.get("http://localhost:8080/docs", timeout=5)
+                logger.info(f"Backend acessível. Status: {test_response.status_code}")
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Backend não está acessível: {str(e)}")
+                return False
+            
+            # Enviar dados da matrícula
             response = requests.post(url, json=dados, headers=headers, timeout=10)
+            
+            logger.info(f"Resposta do backend - Status: {response.status_code}")
+            logger.info(f"Resposta do backend - Text: {response.text}")
             
             if response.status_code == 201:
                 logger.info(f"Matrícula enviada com sucesso: {nome} - {email} - {curso}")
                 return True
+            elif response.status_code == 409:
+                logger.warning(f"Email já cadastrado: {email}")
+                return False
             else:
                 logger.error(f"Erro ao enviar matrícula. Status: {response.status_code}, Response: {response.text}")
                 return False
                 
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.ConnectionError as e:
             logger.error(f"Erro de conexão ao enviar matrícula: {str(e)}")
+            return False
+        except requests.exceptions.Timeout as e:
+            logger.error(f"Timeout ao enviar matrícula: {str(e)}")
+            return False
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Erro de requisição ao enviar matrícula: {str(e)}")
             return False
         except Exception as e:
             logger.error(f"Erro inesperado ao enviar matrícula: {str(e)}")
