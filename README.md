@@ -10,7 +10,6 @@
 - Python
 - Flask
 - SQLAlchemy
-- Azure Cosmos DB
 - MySQL Azure
 - PyMySQL
 - azure web app service
